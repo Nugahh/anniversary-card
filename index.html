@@ -150,9 +150,24 @@
   .back img { width: 70%; }
 
   canvas { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
+
+  .switch { position: fixed; top: 14px; right: 14px; z-index: 10; display: flex; gap: 10px; }
+  .switch a {
+    width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 22px; text-decoration: none; transition: transform .2s; opacity: .75;
+  }
+  .switch a:hover, .switch a[aria-current] { transform: scale(1.15); opacity: 1; }
+  .switch .hk { background: #ff8fc4; border: 3px solid #fff; box-shadow: 0 0 10px #ff4fa3aa; }
+  .switch .spn { background: #14110d; border: 3px solid #c9964f; color: #f0c987; box-shadow: 0 0 10px #c9964faa; }
+  .switch a[aria-current] { box-shadow: 0 0 0 3px #fff8, 0 0 16px 4px #ff4fa3; }
 </style>
 </head>
 <body>
+  <nav class="switch" aria-label="Changer de thème">
+    <a class="hk" href="index.html" title="Hello Kitty" aria-current="page">🎀</a>
+    <a class="spn" href="supernatural.html" title="Supernatural">⚡</a>
+  </nav>
+
   <div class="scene">
     <div class="card" id="card">
       <div class="inside">

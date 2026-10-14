@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🎁</title>
+<meta property="og:title" content="🎁">
+<meta property="og:description" content="🖤">
+<meta property="og:image" content="https://nugahh.github.io/anniversary-card/images/cut/spn-castiel-close.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=IM+Fell+English:ital@1&display=swap" rel="stylesheet">
+<style>
+  /* palette tirée de colors.png : ciel d'orage, ambre, olive, noir */
+  :root {
+    --night: #0b0d0c; --storm: #2b2f2e; --dusk: #3b3020; --olive: #4d5443;
+    --amber: #c9964f; --sun: #f0c987; --trench: #b9a98a; --blood: #a3201a;
+    --calm: 0; /* 0 = plein orage, ~0.75 = l'orage s'éloigne, le soleil perce */
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body {
+    display: grid; place-items: center; background: var(--night);
+    font-family: 'Cinzel Decorative', Georgia, serif;
+  }
+
+  /* ---------- décor : ciel, nuages, rayons, pluie, éclairs ---------- */
+  .layer { position: fixed; inset: 0; pointer-events: none; }
+  .sky { background: linear-gradient(180deg, #0a0c0c 0%, #1b1d1b 45%, #2d2619 100%); }
+  .sky-sun {
+    background:
+      radial-gradient(ellipse 70% 55% at 80% 0%, #f0c987dd, transparent 70%),
+      linear-gradient(180deg, #7a6a52 0%, #a98650 55%, #3b3020 100%);
+    opacity: calc(var(--calm) * .85);
+  }
+  .clouds div {
+    position: absolute; border-radius: 50%; filter: blur(40px);
+    background: radial-gradient(#050606, #1c1f1e 60%, transparent 72%);
+    animation: drift var(--t) linear infinite alternate;
+  }
+  .clouds { opacity: calc(1 - var(--calm) * .55); }
+  .clouds div:nth-child(1) { width: 90vw; height: 45vh; left: -20vw; top: -12vh; --t: 38s; }
+  .clouds div:nth-child(2) { width: 80vw; height: 40vh; left: 35vw; top: -8vh; --t: 46s; animation-direction: alternate-reverse; }
+  .clouds div:nth-child(3) { width: 100vw; height: 35vh; left: 0; top: 18vh; --t: 60s; opacity: .7; }
+  @keyframes drift { from { transform: translateX(-6vw); } to { transform: translateX(8vw); } }
+  .rays {
+    background: conic-gradient(from 195deg at 85% -5%, transparent 0 4deg, #f0c98755 6deg 9deg, transparent 12deg 18deg,
+      #f0c98744 21deg 24deg, transparent 28deg 36deg, #f0c98733 38deg 42deg, transparent 46deg);
+    opacity: calc(var(--calm) * 1.1); mix-blend-mode: screen;
+    animation: shimmer 5s ease-in-out infinite alternate;
+  }
+  @keyframes shimmer { from { filter: brightness(.8); } to { filter: brightness(1.3); } }
+  .flash { background: #dbe8ff; opacity: 0; }
+  .vignette { background: radial-gradient(ellipse at center, transparent 45%, #000c 100%); }
+  canvas#fx { position: fixed; inset: 0; pointer-events: none; }
+
+  /* ---------- boutons de bascule ---------- */
+  .switch { position: fixed; top: 14px; right: 14px; z-index: 10; display: flex; gap: 10px; }
+  .switch a {
+    width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 22px; text-decoration: none; transition: transform .2s; opacity: .75;
+  }
+  .switch a:hover, .switch a[aria-current] { transform: scale(1.15); opacity: 1; }
+  .switch .hk { background: #ff8fc4; border: 3px solid #fff; box-shadow: 0 0 10px #ff4fa3aa; }
+  .switch .spn { background: #14110d; border: 3px solid var(--amber); color: var(--sun); box-shadow: 0 0 10px #c9964faa; }
+  .switch a[aria-current] { box-shadow: 0 0 0 3px #fff8, 0 0 16px 4px var(--sun); }
+
+  /* ---------- carte ---------- */
+  .scene { perspective: 1600px; position: relative; z-index: 2; }
+  .card {
+    --w: min(42vw, 300px);
+    position: relative; width: var(--w); aspect-ratio: 3 / 4; cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(.5, 0, .2, 1);
+    animation: float 4s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card.open { transform: translateX(50%); animation: none; }
+  @keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+
+  .face, .inside { border: 4px solid var(--amber); box-shadow: 0 14px 40px #000c, 0 0 28px #c9964f33; }
+  .paper {
+    background:
+      radial-gradient(ellipse at 30% 20%, #3b302055, transparent 60%),
+      linear-gradient(160deg, #221d16, #15120e);
+  }
+
+  /* page de droite */
+  .inside {
+    position: absolute; inset: 0; border-radius: 3px 12px 12px 3px; overflow: visible;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; text-align: center; padding: 10px 10px 22%;
+  }
+  .inside h1 {
+    margin: 0; font-size: clamp(1.1rem, 4.6vw, 1.9rem); line-height: 1.12; letter-spacing: .02em;
+    background: linear-gradient(180deg, #fff1cf, var(--sun) 40%, var(--amber) 75%, #7a5524);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 8px #c9964f99) drop-shadow(0 2px 2px #000);
+    opacity: 0; transform: scale(.85);
+  }
+  .inside .sub {
+    font-family: 'IM Fell English', Georgia, serif; font-style: italic; color: var(--trench);
+    font-size: clamp(.8rem, 2.8vw, 1.1rem); opacity: 0;
+  }
+  .inside .quote {
+    position: absolute; right: 36%; bottom: 14px; width: 54%; text-align: right; rotate: -3deg;
+    font-family: 'IM Fell English', Georgia, serif; font-style: italic; color: var(--amber);
+    font-size: clamp(.55rem, 1.9vw, .78rem); line-height: 1.3; opacity: 0;
+  }
+  .inside .duo {
+    position: absolute; right: -6px; bottom: -6px; width: 36%; opacity: 0; transform: translateY(40px);
+    filter: drop-shadow(2px 0 0 var(--trench)) drop-shadow(-2px 0 0 var(--trench)) drop-shadow(0 2px 0 var(--trench))
+            drop-shadow(0 -2px 0 var(--trench)) drop-shadow(0 4px 6px #000a);
+  }
+  .card.open .inside h1 { animation: appear 1.2s ease .8s forwards, glow 3s ease-in-out 2s infinite; }
+  .card.open .inside .sub { animation: fade .8s ease 1.6s forwards; }
+  .card.open .inside .quote { animation: fade .8s ease 2.2s forwards; }
+  .card.open .inside .duo { animation: up .8s cubic-bezier(.3, 1.4, .5, 1) 1.9s forwards; }
+  @keyframes appear { to { opacity: 1; transform: scale(1); } }
+  @keyframes fade { to { opacity: 1; } }
+  @keyframes up { to { opacity: 1; transform: translateY(0) rotate(10deg); } }
+  @keyframes glow { 50% { filter: drop-shadow(0 0 16px #f0c987) drop-shadow(0 2px 2px #000); } }
+
+  /* couverture */
+  .cover {
+    position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(.5, 0, .2, 1);
+  }
+  .card.open .cover { transform: rotateY(-172deg); }
+  .face {
+    position: absolute; inset: 0; backface-visibility: hidden; overflow: hidden;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .front {
+    border-radius: 3px 12px 12px 3px;
+    background:
+      radial-gradient(ellipse at 50% 35%, #c9964f55, transparent 60%),
+      linear-gradient(180deg, #1c1e1d, #0b0d0c);
+  }
+  .front .trap { /* piège du diable, tourne lentement */
+    position: absolute; width: 120%; left: -10%; top: 14%; opacity: .55;
+    animation: spin 60s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .front .cas {
+    position: relative; height: 92%; z-index: 1;
+    filter: drop-shadow(0 0 14px #c9964f88) drop-shadow(0 6px 10px #000);
+    animation: flicker 7s steps(1) infinite;
+  }
+  @keyframes flicker { 0%, 91%, 94%, 100% { filter: drop-shadow(0 0 14px #c9964f88) drop-shadow(0 6px 10px #000); }
+    92%, 95% { filter: brightness(1.6) drop-shadow(0 0 24px #cfe3ff) drop-shadow(0 6px 10px #000); } }
+  .front::after { /* reflet */
+    content: ''; position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(115deg, transparent 40%, #f0c98733 50%, transparent 60%);
+    background-size: 250% 100%; animation: gloss 5s ease-in-out infinite;
+  }
+  @keyframes gloss { from { background-position: 150% 0; } to { background-position: -100% 0; } }
+  .back { transform: rotateY(180deg); border-radius: 12px 3px 3px 12px; align-items: flex-end; }
+  .back .big { /* Castiel dépasse de la page */
+    height: 100%; max-width: 110%; object-fit: contain; object-position: bottom;
+    filter: drop-shadow(0 0 18px #c9964f66);
+  }
+</style>
+</head>
+<body>
+  <div class="layer sky"></div>
+  <div class="layer sky-sun"></div>
+  <div class="layer clouds"><div></div><div></div><div></div></div>
+  <div class="layer rays"></div>
+  <canvas id="fx"></canvas>
+  <div class="layer flash" id="flash"></div>
+  <div class="layer vignette"></div>
+
+  <nav class="switch" aria-label="Changer de thème">
+    <a class="hk" href="index.html" title="Hello Kitty">🎀</a>
+    <a class="spn" href="supernatural.html" title="Supernatural" aria-current="page">⚡</a>
+  </nav>
+
+  <div class="scene">
+    <div class="card" id="card">
+      <div class="inside paper">
+        <h1>Happy<br>birthday<br>Anna !</h1>
+        <div class="sub">you are the most beautiful</div>
+        <div class="quote">“Be yourself; everyone else is already taken”</div>
+        <img class="duo" src="images/cut/spn-sam-dean.png" alt="">
+      </div>
+      <div class="cover">
+        <div class="face front">
+          <svg class="trap" viewBox="-100 -100 200 200" fill="none" stroke="#a3201a" stroke-width="1.6">
+            <circle r="92"/><circle r="80"/>
+            <polygon points="0,-80 76,-25 47,65 -47,65 -76,-25"/>
+            <polygon points="0,80 -76,25 -47,-65 47,-65 76,25" opacity=".6"/>
+          </svg>
+          <img class="cas" src="images/cut/spn-castiel-full.png" alt="Castiel">
+        </div>
+        <div class="face back paper"><img class="big" src="images/cut/spn-castiel-close.png" alt="Castiel"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const card = document.getElementById('card'), flash = document.getElementById('flash');
+  const cv = document.getElementById('fx'), ctx = cv.getContext('2d');
+  let W, H, calm = 0, target = 0;
+  const fit = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+  fit(); addEventListener('resize', fit);
+
+  // pluie
+  const drops = Array.from({ length: 220 }, () => ({
+    x: Math.random(), y: Math.random(), l: 12 + Math.random() * 18, v: 14 + Math.random() * 12
+  }));
+
+  // éclairs
+  const bolts = [];
+  function zig(x1, y1, x2, y2, d, out) {
+    if (d < 5) return out.push([x1, y1, x2, y2]);
+    const mx = (x1 + x2) / 2 + (Math.random() - .5) * d, my = (y1 + y2) / 2 + (Math.random() - .5) * d * .4;
+    zig(x1, y1, mx, my, d / 2, out); zig(mx, my, x2, y2, d / 2, out);
+  }
+  function strike() {
+    const x = W * (.1 + Math.random() * .8), segs = [];
+    const ex = x + (Math.random() - .5) * W * .25, ey = H * (.4 + Math.random() * .35);
+    zig(x, 0, ex, ey, W * .12, segs);
+    for (let i = 0; i < 3; i++) { // branches
+      const s = segs[Math.floor(Math.random() * segs.length)];
+      zig(s[2], s[3], s[2] + (Math.random() - .5) * W * .2, s[3] + H * .2, W * .06, segs);
+    }
+    const power = 1 - calm * .7; // plus faible quand l'orage s'éloigne
+    bolts.push({ segs, life: 1, power });
+    flash.animate([{ opacity: .55 * power }, { opacity: 0, offset: .15 }, { opacity: .3 * power, offset: .25 }, { opacity: 0 }], { duration: 600 });
+    card.style.setProperty('filter', `brightness(${1 + .5 * power})`);
+    setTimeout(() => card.style.removeProperty('filter'), 120);
+  }
+  (function loop() {
+    strike();
+    if (Math.random() < .4) setTimeout(strike, 180);
+    setTimeout(loop, (2500 + Math.random() * 4500) * (1 + calm * 3));
+  })();
+
+  function frame() {
+    calm += (target - calm) * .02;
+    document.documentElement.style.setProperty('--calm', calm.toFixed(3));
+    ctx.clearRect(0, 0, W, H);
+
+    // pluie : moins dense et plus claire quand calm monte
+    ctx.strokeStyle = `rgba(190,210,230,${.32 * (1 - calm * .7)})`; ctx.lineWidth = 1; ctx.beginPath();
+    const n = Math.floor(drops.length * (1 - calm * .8));
+    for (let i = 0; i < n; i++) {
+      const d = drops[i]; d.y += d.v / H; d.x -= 3 / W;
+      if (d.y > 1) { d.y = -.05; d.x = Math.random() * 1.1; }
+      ctx.moveTo(d.x * W, d.y * H); ctx.lineTo(d.x * W - 3, d.y * H + d.l);
+    }
+    ctx.stroke();
+
+    // éclairs
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (let i = bolts.length - 1; i >= 0; i--) {
+      const b = bolts[i]; b.life -= .045;
+      if (b.life <= 0) { bolts.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.min(1, b.life * 1.6) * b.power;
+      ctx.shadowColor = '#9fc4ff'; ctx.shadowBlur = 22; ctx.strokeStyle = '#f2f7ff'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); for (const s of b.segs) { ctx.moveTo(s[0], s[1]); ctx.lineTo(s[2], s[3]); } ctx.stroke();
+    }
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // clic : l'orage s'éloigne un peu et le soleil perce (sans disparaître)
+  card.addEventListener('click', () => {
+    const open = card.classList.toggle('open');
+    target = open ? .75 : 0;
+    if (open) setTimeout(strike, 250); // un dernier éclair à l'ouverture
+  });
+</script>
+</body>
+</html>
